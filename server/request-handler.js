@@ -41,7 +41,12 @@ var requestHandler = function(request, response) {
     statusCode = 201;
   }
   else if (request.method === "OPTIONS") {
-    statusCode = 204;
+    //statusCode = 204;
+    //changed from 204 to 200
+    console.log('!OPTIONS');
+    statusCode = 200;
+    response.writeHead(statusCode, defaultCorsHeaders);
+
   }
   // = 200;
   var queryData = url.parse(request.url, true);
@@ -77,6 +82,17 @@ var requestHandler = function(request, response) {
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
   //
+  //
+  var postData = '';
+  request.on('data', function(item){
+    postData += item;
+  });
+
+  request.on('end', function(){
+    console.log(postData);
+  })
+
+
   var resObj = {results: ["results"]}
   response.end(JSON.stringify(resObj));
 };
