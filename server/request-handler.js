@@ -1,3 +1,4 @@
+var url = require('url');
 /*************************************************************
 
 You should implement your request handler function in this file.
@@ -30,7 +31,22 @@ var requestHandler = function(request, response) {
   console.log("Serving request type " + request.method + " for url " + request.url);
 
   // The outgoing status.
-  var statusCode = 200;
+
+  var statusCode;
+
+  if(request.method === "GET"){
+    statusCode = 200
+  }
+  else if (request.method === "POST"){
+    statusCode = 201;
+  }
+  // = 200;
+  var queryData = url.parse(request.url, true);
+  var path = queryData.pathname;
+
+  if(path !== '/classes/messages' && path !== '/classes/room1'){
+    statusCode = 404;
+  }
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
@@ -45,6 +61,11 @@ var requestHandler = function(request, response) {
   // which includes the status and all headers.
   response.writeHead(statusCode, headers);
 
+
+  //queryData.pathname should equal classes/messages OR classes/room
+  //
+
+
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
@@ -52,7 +73,9 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end("Hello, World!");
+  //
+  var resObj = {results: ["results"]}
+  response.end(JSON.stringify(resObj));
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
@@ -70,4 +93,7 @@ var defaultCorsHeaders = {
   "access-control-allow-headers": "content-type, accept",
   "access-control-max-age": 10 // Seconds.
 };
+
+//module.exports = requestHandler;
+exports.requestHandler = requestHandler;
 
