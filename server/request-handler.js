@@ -40,6 +40,9 @@ var requestHandler = function(request, response) {
   else if (request.method === "POST"){
     statusCode = 201;
   }
+  else if (request.method === "OPTIONS") {
+    statusCode = 204;
+  }
   // = 200;
   var queryData = url.parse(request.url, true);
   var path = queryData.pathname;
