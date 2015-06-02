@@ -12,6 +12,8 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
+var storage = [];
+
 
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
@@ -33,12 +35,15 @@ var requestHandler = function(request, response) {
   // The outgoing status.
 
   var statusCode;
+  var endResponse;
 
   if(request.method === "GET"){
     statusCode = 200
+    endResponse = handleGet()
   }
   else if (request.method === "POST"){
     statusCode = 201;
+    handlePost(request);
   }
   else if (request.method === "OPTIONS") {
     //statusCode = 204;
@@ -63,7 +68,7 @@ var requestHandler = function(request, response) {
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = "text/plain";
+  headers['Content-Type'] = "application/json";
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
@@ -83,20 +88,30 @@ var requestHandler = function(request, response) {
   // node to actually send all the data over to the client.
   //
   //
+
+  //
+
+
+
+  //var resObj = {results: ["results"]}
+  response.end(JSON.stringify({results: endResponse}));
+};
+
+var handlePost = function(request){
   var postData = '';
   request.on('data', function(item){
     postData += item;
   });
 
   request.on('end', function(){
-    console.log(postData);
+    var jsonData = JSON.parse(postData)
+    storage.push(jsonData);
   })
-
-
-  var resObj = {results: ["results"]}
-  response.end(JSON.stringify(resObj));
 };
 
+var handleGet = function(){
+  return storage;
+};
 // These headers will allow Cross-Origin Resource Sharing (CORS).
 // This code allows this server to talk to websites that
 // are on different domains, for instance, your chat client.
